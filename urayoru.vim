@@ -44,7 +44,7 @@ noremap <C-k> <C-w>k
 
 "******** bundle ********
 if isdirectory($vimdir."/bundle/Vundle.vim")
-  et $plugindir = $vimdir."/bundle"
+  let $plugindir = $vimdir."/bundle"
   set nocompatible              " be iMproved, required
   filetype off                  " required
 
@@ -75,8 +75,8 @@ if filereadable($vimdir."/autoload/plug.vim")
   Plug 'jiangmiao/auto-pairs'
 
   " vim scheme
-  Plug 'evturn/cosmic-barf'
-  Plug 'tomasr/molokai'
+  "Plug 'evturn/cosmic-barf'
+  "Plug 'tomasr/molokai'
 
   call plug#end()            " required
 endif
@@ -137,7 +137,7 @@ function AutoPairsLoader()
 endfunction
 
 "******** scheme ********
-colorscheme cosmic-barf
+silent! colorscheme cosmic-barf
 
 "[Load plugin]
 autocmd VimEnter * if exists('NERDTree')  | call NERDTreeLoader()      | endif
