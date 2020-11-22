@@ -41,7 +41,8 @@ noremap <C-l> <C-w>l
 noremap <C-j> <C-w>j
 noremap <C-k> <C-w>k
 
-
+noremap <tab> gt
+noremap <tab> gT
 "******** bundle ********
 if isdirectory($vimdir."/bundle/Vundle.vim")
   let $plugindir = $vimdir."/bundle"
@@ -75,7 +76,7 @@ if filereadable($vimdir."/autoload/plug.vim")
   Plug 'jiangmiao/auto-pairs'
 
   " vim scheme
-  "Plug 'evturn/cosmic-barf'
+  Plug 'evturn/cosmic-barf'
   "Plug 'tomasr/molokai'
 
   call plug#end()            " required
@@ -83,25 +84,27 @@ endif
 
 "******** python *********
 autocmd FileType python set tabstop=4 shiftwidth=4 expandtab ai
-autocmd BufNewFile,BufRead *.py :noremap <F9> :!python % <CR>
-
-autocmd BufNewFile,BufRead *.py let g:pydiction_location = 
+autocmd BufNewFile,BufRead *.py :noremap <F9> :!python % <CR> 
+autocmd BufNewFile,BufRead *.py let g:pydiction_location =
       \$plugindir."/Pydiction/complete-dict"
 autocmd BufNewFile,BufRead *.py let g:pydiction_menu_height = 3
 
 "******** c ********
 autocmd BufNewFile,BufRead *.c :noremap <F9> :!gcc % -o %:r && ./%:r <CR>
+autocmd BufNewFile,BufRead *.cpp :noremap <F9> :!g++ % -o %:r && ./%:r <CR>
 
 "******** nerdtree ********
+autocmd StdinReadPre * let s:std_in=1
 function! NERDTreeLoader()
   nnoremap <silent> <F2> :NERDTreeToggle<CR>
-  autocmd StdinReadPre * let s:std_in=1
-  autocmd VimEnter *
-        \ if argc() == 0 && !exists("s:std_in") | NERDTree | endif
-  autocmd bufenter * 
-        \ if (winnr("$") == 1 
-        \ && exists("b:NERDTree") 
-        \ && b:NERDTree.isTabTree()) | q | endif
+  if argc() == 0 && !exists('std_in') | NERDTree | endif
+  if argc() == 1 && isdirectory(argv()[0]) 
+\ && !exists("s:std_in") | exe 'NERDTree' argv()[0] 
+                       \ | wincmd p 
+                       \ | ene | exe 'cd '.argv()[0] | endif
+  autocmd BufEnter * if (winnr("$") == 1
+\ && exists("b:NERDTree") 
+\ && b:NERDTree.isTabTree()) | q | endif
   let NERDTreeIgnore = [
     \'\.DS_Store$',
     \'\.bundle$',
@@ -116,10 +119,12 @@ function! NERDTreeLoader()
     \'\.swp$',
     \'tags$'
   \]
-  let g:NERDTreeDirArrowExpandable = '➝'
-  let g:NERDTreeDirArrowCollapsible = '▾'
-  let g:NERDTreeWinSize=24
+
 endfunction
+let NERDTreeMinimalUI=1
+let g:NERDTreeDirArrowExpandable = '➝'
+let g:NERDTreeDirArrowCollapsible = '▾'
+let g:NERDTreeWinSize=24
 
 
 "******** indentline ********
@@ -133,13 +138,13 @@ endfunction
 
 "******** auto-pairs ********
 function AutoPairsLoader()
-  let g:AutoPairsFlayMode = 1
+  let g:AutoPairsFlyMode = 1
 endfunction
 
-"******** scheme ********
+""******** scheme ********
 silent! colorscheme cosmic-barf
 
 "[Load plugin]
-autocmd VimEnter * if exists('NERDTree')  | call NERDTreeLoader()      | endif
+autocmd VimEnter * if exists('NERDTree')  | call NERDTreeLoader()  | endif
 autocmd VimEnter * if exists('lightline') | call LightlineLoader() | endif
 autocmd VimEnter * if exists('AutoPairs') | call AutoPairsLoader() | endif
